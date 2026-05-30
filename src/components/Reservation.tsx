@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Send, CheckCircle } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 
 export default function Reservation() {
   const [form, setForm] = useState({ name: '', email: '', date: '', guests: '2', message: '' });
@@ -11,12 +12,31 @@ export default function Reservation() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    await emailjs.send(
+      'service_4lbol3b',
+      'template_ek9gra6',
+      {
+        name: form.name,
+        email: form.email,
+        date: form.date,
+        guests: form.guests,
+        message: form.message,
+      },
+      'DayiT3CD21KLrX8yP'
+    );
+    console.log("FORM SUBMIT TRIGGERED");
     setSent(true);
-    setLoading(false);
-  };
+  } catch (error) {
+    console.error('Email error:', error);
+    alert('Erreur lors de l’envoi');
+  }
+
+  setLoading(false);
+};
 
   return (
     <section id="réservations" className="py-28 px-6 bg-[#050508] relative">
