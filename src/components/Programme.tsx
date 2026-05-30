@@ -1,153 +1,176 @@
-import { Calendar, Clock, MapPin, ExternalLink } from 'lucide-react';
+import { useState } from 'react';
+import { Send, CheckCircle } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 
-const events = [
-  {
-    date: 'VEN 06 JUIN',
-    title: 'RESOM b2b DYEN',
-    genre: 'Hard Techno / Industrial',
-    time: '23:00 — 06:00',
-    location: 'Main Floor',
-    price: '12€',
-    highlight: true,
-    img: 'https://images.pexels.com/photos/2114365/pexels-photo-2114365.jpeg?auto=compress&cs=tinysrgb&w=800',
-  },
-  {
-    date: 'SAM 07 JUIN',
-    title: 'OBSCURA COLLECTIVE',
-    genre: 'Dark Ambient / EBM',
-    time: '22:00 — 05:00',
-    location: 'Main Floor',
-    price: '10€',
-    highlight: false,
-    img: 'https://images.pexels.com/photos/1540319/pexels-photo-1540319.jpeg?auto=compress&cs=tinysrgb&w=800',
-  },
-  {
-    date: 'VEN 13 JUIN',
-    title: 'KLONK & STRÏKE',
-    genre: 'Acid / Rave',
-    time: '23:00 — 07:00',
-    location: 'Main Floor + Terrace',
-    price: '15€',
-    highlight: false,
-    img: 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=800',
-  },
-  {
-    date: 'SAM 14 JUIN',
-    title: 'SUBMERGE NIGHT',
-    genre: 'Detroit Techno',
-    time: '22:00 — 06:00',
-    location: 'Main Floor',
-    price: '18€',
-    highlight: false,
-    img: 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
-  },
-  {
-    date: 'VEN 20 JUIN',
-    title: 'VOID FREQUENCY',
-    genre: 'Noise / Experimental',
-    time: '23:00 — 06:00',
-    location: 'Cave Room',
-    price: '8€',
-    highlight: false,
-    img: 'https://images.pexels.com/photos/3756766/pexels-photo-3756766.jpeg?auto=compress&cs=tinysrgb&w=800',
-  },
-  {
-    date: 'SAM 21 JUIN',
-    title: 'FÊTE DE LA MUSIQUE EDITION',
-    genre: 'All Genres / Free Entry',
-    time: '20:00 — 06:00',
-    location: 'All Floors',
-    price: 'Gratuit',
-    highlight: true,
-    img: 'https://images.pexels.com/photos/1699161/pexels-photo-1699161.jpeg?auto=compress&cs=tinysrgb&w=800',
-  },
-];
+export default function Reservation() {
+  const [form, setForm] = useState({ name: '', email: '', date: '', guests: '2', message: '' });
+  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-export default function Programme() {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    await emailjs.send(
+      'service_4lbol3b',
+      'template_ek9gra6',
+      {
+        name: form.name,
+        email: form.email,
+        date: form.date,
+        guests: form.guests,
+        message: form.message,
+      },
+      'DayiT3CD21KLrX8yP'
+    );
+
+    setSent(true);
+  } catch (error) {
+    console.error('Email error:', error);
+    alert('Erreur lors de l’envoi');
+  }
+
+  setLoading(false);
+};
+
   return (
-    <section id="programme" className="py-28 px-6 bg-[#050508] relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00f5ff]/30 to-transparent" />
+    <section id="réservations" className="py-28 px-6 bg-[#050508] relative">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#ff0080]/30 to-transparent" />
+      <div className="absolute inset-0 bg-scanlines opacity-20" />
 
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-16">
-          <p className="font-mono text-xs tracking-[0.4em] text-[#00f5ff] uppercase mb-3">// Programme</p>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-white uppercase tracking-tight">
-            Événements à venir
-          </h2>
-        </div>
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
+          {/* Info */}
+          <div>
+            <p className="font-mono text-xs tracking-[0.4em] text-[#ff0080] uppercase mb-3">// Réservations</p>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-white uppercase tracking-tight mb-8">
+              Réserver<br />
+              <span className="text-[#ff0080] neon-glow-pink">une table</span>
+            </h2>
+            <p className="text-gray-400 text-sm leading-relaxed mb-10 max-w-sm">
+              Les tables VIP incluent bouteille(s), accès prioritaire et placement préférentiel. Disponible pour groupes de 2 à 12 personnes.
+            </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#00f5ff]/10">
-          {events.map((event) => (
-            <EventCard key={event.title} event={event} />
-          ))}
+            <div className="space-y-6">
+              {[
+                { label: 'TABLE STANDARD', info: 'Dès 2 personnes — consommation sur place', price: 'Gratuit' },
+                { label: 'TABLE VIP', info: '4 personnes min — 1 bouteille incluse', price: 'À partir de 80€' },
+                { label: 'LOGE PRIVÉE', info: 'Jusqu\'à 12 personnes — service dédié', price: 'Sur devis' },
+              ].map((tier) => (
+                <div key={tier.label} className="flex items-start gap-4 p-4 border border-[#1a1a2e] hover:border-[#ff0080]/30 transition-colors">
+                  <div className="w-1 h-full min-h-12 bg-[#ff0080]/30 flex-shrink-0" />
+                  <div className="flex-1">
+                    <div className="flex items-baseline justify-between">
+                      <span className="font-mono text-xs font-bold tracking-widest text-white uppercase">{tier.label}</span>
+                      <span className="font-display text-sm text-[#ff0080]">{tier.price}</span>
+                    </div>
+                    <p className="font-mono text-xs text-gray-600 mt-1">{tier.info}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Form */}
+          <div className="border border-[#1a1a2e] p-8 bg-[#080810]"
+            style={{ boxShadow: '0 0 40px rgba(255,0,128,0.05)' }}>
+            {sent ? (
+              <div className="flex flex-col items-center justify-center py-16 text-center gap-4">
+                <CheckCircle size={48} className="text-[#00ff88]" style={{ filter: 'drop-shadow(0 0 12px #00ff88)' }} />
+                <h3 className="font-display text-xl text-white uppercase tracking-wide">Demande envoyée</h3>
+                <p className="font-mono text-xs text-gray-500 tracking-widest">Nous vous confirmerons votre réservation par email dans les 24h.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="font-mono text-xs tracking-widest text-gray-500 uppercase block mb-2">Nom</label>
+                    <input
+                      name="name"
+                      required
+                      value={form.name}
+                      onChange={handleChange}
+                      placeholder="Votre nom"
+                      className="w-full bg-[#050508] border border-[#1a1a2e] text-white text-sm px-4 py-3 focus:outline-none focus:border-[#ff0080]/60 transition-colors placeholder-gray-700 font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-mono text-xs tracking-widest text-gray-500 uppercase block mb-2">Invités</label>
+                    <select
+                      name="guests"
+                      value={form.guests}
+                      onChange={handleChange}
+                      className="w-full bg-[#050508] border border-[#1a1a2e] text-white text-sm px-4 py-3 focus:outline-none focus:border-[#ff0080]/60 transition-colors font-mono appearance-none"
+                    >
+                      {[2, 3, 4, 5, 6, 7, 8, 10, 12].map((n) => (
+                        <option key={n} value={n}>{n} personnes</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-mono text-xs tracking-widest text-gray-500 uppercase block mb-2">Email</label>
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="votre@email.com"
+                    className="w-full bg-[#050508] border border-[#1a1a2e] text-white text-sm px-4 py-3 focus:outline-none focus:border-[#ff0080]/60 transition-colors placeholder-gray-700 font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-mono text-xs tracking-widest text-gray-500 uppercase block mb-2">Date de l'événement</label>
+                  <input
+                    name="date"
+                    type="date"
+                    required
+                    value={form.date}
+                    onChange={handleChange}
+                    className="w-full bg-[#050508] border border-[#1a1a2e] text-white text-sm px-4 py-3 focus:outline-none focus:border-[#ff0080]/60 transition-colors font-mono [color-scheme:dark]"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-mono text-xs tracking-widest text-gray-500 uppercase block mb-2">Message (optionnel)</label>
+                  <textarea
+                    name="message"
+                    value={form.message}
+                    onChange={handleChange}
+                    rows={3}
+                    placeholder="Événement spécial, demandes particulières..."
+                    className="w-full bg-[#050508] border border-[#1a1a2e] text-white text-sm px-4 py-3 focus:outline-none focus:border-[#ff0080]/60 transition-colors placeholder-gray-700 font-mono resize-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-3 bg-[#ff0080] text-white font-mono text-xs tracking-widest uppercase py-4 font-bold hover:bg-[#ff3399] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ boxShadow: '0 0 30px rgba(255,0,128,0.3)' }}
+                >
+                  {loading ? (
+                    <span className="animate-pulse">Envoi en cours...</span>
+                  ) : (
+                    <>
+                      <Send size={14} />
+                      Envoyer la demande
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
+          </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function EventCard({ event }: { event: typeof events[0] }) {
-  return (
-    <article
-      className={`group relative bg-[#050508] overflow-hidden cursor-pointer transition-all duration-500 hover:bg-[#0a0a15]`}
-    >
-      {event.highlight && (
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-[#00f5ff]"
-          style={{ boxShadow: '0 0 10px #00f5ff' }} />
-      )}
-
-      <div className="relative h-48 overflow-hidden">
-        <img
-          src={event.img}
-          alt={event.title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-40 group-hover:opacity-60"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-[#050508]/60 to-transparent" />
-        <div className="absolute top-4 left-4">
-          <span className="font-mono text-xs tracking-widest text-[#00f5ff] bg-[#050508]/80 px-3 py-1 border border-[#00f5ff]/30">
-            {event.date}
-          </span>
-        </div>
-        {event.highlight && (
-          <div className="absolute top-4 right-4">
-            <span className="font-mono text-xs tracking-widest text-black bg-[#00f5ff] px-3 py-1 font-bold">
-              FEATURED
-            </span>
-          </div>
-        )}
-      </div>
-
-      <div className="p-6">
-        <h3 className="font-display text-xl font-bold text-white group-hover:text-[#00f5ff] transition-colors duration-300 mb-1 tracking-wide">
-          {event.title}
-        </h3>
-        <p className="font-mono text-xs text-[#ff0080] tracking-widest mb-4 uppercase">{event.genre}</p>
-
-        <div className="space-y-2 mb-6">
-          <div className="flex items-center gap-2 text-gray-500">
-            <Clock size={12} />
-            <span className="font-mono text-xs">{event.time}</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-500">
-            <MapPin size={12} />
-            <span className="font-mono text-xs">{event.location}</span>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <span className="font-display text-lg font-bold text-[#00ff88]">{event.price}</span>
-          <a
-            href="#réservations"
-            className="flex items-center gap-1.5 font-mono text-xs tracking-widest text-gray-500 hover:text-[#00f5ff] transition-colors group/btn"
-          >
-            <span className="uppercase">Tickets</span>
-            <ExternalLink size={11} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-          </a>
-        </div>
-      </div>
-
-      <div className="absolute bottom-0 left-0 w-0 h-px bg-[#00f5ff] group-hover:w-full transition-all duration-500"
-        style={{ boxShadow: '0 0 6px #00f5ff' }} />
-    </article>
   );
 }
