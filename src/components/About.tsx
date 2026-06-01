@@ -21,7 +21,7 @@ const features = [
   },
   {
     icon: Shield,
-    title: 'Safer Space',
+    title: 'Un Endroit Plus Sûr',
     desc: 'Equipe de sécurité formée, politique de tolérance zéro contre le harcèlement et espace de pause accessible.',
     color: '#ffff00',
   },
