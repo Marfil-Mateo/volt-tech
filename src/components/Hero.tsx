@@ -63,7 +63,7 @@ export default function Hero() {
           {[
             { val: '600', label: 'Capacité' },
             { val: '2016', label: 'Fondé' },
-            { val: '5★', label: 'Rating' },
+            { val: '4★', label: 'Avis' },
           ].map(({ val, label }) => (
             <div key={label} className="text-center">
               <div className="font-display text-2xl text-[#00f5ff] neon-glow-cyan">{val}</div>
